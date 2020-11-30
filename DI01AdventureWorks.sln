@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DI01AdventureWorksWinFormsUI", "DI01AdventureWorksWinFormsUI\DI01AdventureWorksWinFormsUI.csproj", "{8316A3EE-C5E7-488F-894E-D9620BA479A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8316A3EE-C5E7-488F-894E-D9620BA479A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8316A3EE-C5E7-488F-894E-D9620BA479A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8316A3EE-C5E7-488F-894E-D9620BA479A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8316A3EE-C5E7-488F-894E-D9620BA479A1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {774D367D-E3AE-4363-A650-CFC19072F9A7}
+	EndGlobalSection
+EndGlobal
