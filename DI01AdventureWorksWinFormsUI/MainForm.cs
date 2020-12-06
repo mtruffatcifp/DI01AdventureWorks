@@ -9,7 +9,7 @@ namespace DI01AdventureWorksWinFormsUI
 {
     public partial class MainForm : Form
     {
-        private string lastSql, language;
+        private string language;
         private Query lastQuery;
         private bool onlyavailableProducts = true;
         private bool firstTime = true;
@@ -28,6 +28,16 @@ namespace DI01AdventureWorksWinFormsUI
             classComboBox.Enabled = false;
             styleComboBox.Enabled = false;
             productLineComboBox.Enabled = false;
+
+            infoToolTip.UseFading = true;
+            infoToolTip.UseAnimation = true;
+            infoToolTip.IsBalloon = true;
+            infoToolTip.ShowAlways = true;
+            infoToolTip.AutoPopDelay = 2000;
+            infoToolTip.InitialDelay = 0;
+            infoToolTip.ReshowDelay = 2000;
+
+            LoadMaxPriceRange();
         }
 
         private void ShowResults(string lastSql)
@@ -141,12 +151,19 @@ namespace DI01AdventureWorksWinFormsUI
             }
         }
 
+        private void LoadMaxPriceRange()
+        {
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnVal("AdventureWorksDB")))
+            {
+                var maxprice = connection.Query<int>("EXEC spMaxPrice_GetAll;").ToList();
+                maxPriceTextBox.Text = maxprice.First().ToString() + "€";
+                priceRange.MaximumRange = maxprice.First() + 20;
+                priceRange.RangeMin = -20;
+            }
+        }
+
         private void LoadAllFilters()
         {
-            //sizeComboBox.Enabled = true;
-            //classComboBox.Enabled = true;
-            //styleComboBox.Enabled = true;
-            //productLineComboBox.Enabled = true;
             LoadSizeCombo();
             LoadClassCombo();
             LoadStyleCombo();
@@ -223,15 +240,22 @@ namespace DI01AdventureWorksWinFormsUI
 
         private void clearButton_Click(object sender, EventArgs e)
         {
-            resultListView.Items.Clear();
-            categoryComboBox.Items.Clear();
-            subcategoryComboBox.Items.Clear();
-            sizeComboBox.Items.Clear();
-            
+            ClearAllFilters();
+            searchTextBox.Clear();
             LoadCategoryCombo();
             DisableFilters();
         }
 
+        private void ClearAllFilters()
+        {
+            resultListView.Items.Clear();
+            categoryComboBox.Items.Clear();
+            subcategoryComboBox.Items.Clear();
+            sizeComboBox.Items.Clear();
+            classComboBox.Items.Clear();
+            styleComboBox.Items.Clear();
+            productLineComboBox.Items.Clear();
+        }
         private void DisableFilters()
         {
             sizeComboBox.Enabled = false;
@@ -309,6 +333,12 @@ namespace DI01AdventureWorksWinFormsUI
             }
         }
 
+        private void priceRange_RangeChanged(object sender, EventArgs e)
+        {
+            maxPriceTextBox.Text = priceRange.RangeMax.ToString() + "€";
+            minPriceTextBox.Text = priceRange.RangeMin.ToString() + "€";
+        }
+
         private void languageComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (languageComboBox.SelectedItem.ToString() == "French")
@@ -325,5 +355,20 @@ namespace DI01AdventureWorksWinFormsUI
                 ShowResults(lastQuery.ToQuery());
             }
         }
+
+        private void searchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            ClearAllFilters();
+            LoadCategoryCombo();
+            DisableFilters();
+        }
+
+        private void resultListView_DoubleClick(object sender, EventArgs e)
+        {
+            string selectedProduct = resultListView.SelectedItems[0].Text;
+            DetailProduct dproduct = new DetailProduct(lastQuery);
+            dproduct.ShowDialog();
+        }
+
     }
 }
