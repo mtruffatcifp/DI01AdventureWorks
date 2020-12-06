@@ -43,7 +43,7 @@
             this.classLabel = new System.Windows.Forms.Label();
             this.languageComboBox = new System.Windows.Forms.ComboBox();
             this.languageLabel = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.filtersPanel = new System.Windows.Forms.Panel();
             this.searchTextBox = new System.Windows.Forms.TextBox();
             this.clearButton = new System.Windows.Forms.Button();
             this.availabilityCheckBox = new System.Windows.Forms.CheckBox();
@@ -51,7 +51,7 @@
             this.searchLabel = new System.Windows.Forms.Label();
             this.productLineLabel = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.panel1.SuspendLayout();
+            this.filtersPanel.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -169,6 +169,8 @@
             this.styleComboBox.Name = "styleComboBox";
             this.styleComboBox.Size = new System.Drawing.Size(50, 25);
             this.styleComboBox.TabIndex = 8;
+            this.styleComboBox.SelectedIndexChanged += new System.EventHandler(this.styleComboBox_SelectedIndexChanged);
+            this.styleComboBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.styleComboBox_MouseDown);
             // 
             // styleLabel
             // 
@@ -235,32 +237,32 @@
             this.languageLabel.TabIndex = 9;
             this.languageLabel.Text = "Language:";
             // 
-            // panel1
+            // filtersPanel
             // 
-            this.panel1.BackColor = System.Drawing.Color.White;
-            this.panel1.Controls.Add(this.searchTextBox);
-            this.panel1.Controls.Add(this.clearButton);
-            this.panel1.Controls.Add(this.availabilityCheckBox);
-            this.panel1.Controls.Add(this.categoryComboBox);
-            this.panel1.Controls.Add(this.categoryLabel);
-            this.panel1.Controls.Add(this.productLineComboBox);
-            this.panel1.Controls.Add(this.languageComboBox);
-            this.panel1.Controls.Add(this.subcategoryLabel);
-            this.panel1.Controls.Add(this.classComboBox);
-            this.panel1.Controls.Add(this.searchLabel);
-            this.panel1.Controls.Add(this.productLineLabel);
-            this.panel1.Controls.Add(this.subcategoryComboBox);
-            this.panel1.Controls.Add(this.languageLabel);
-            this.panel1.Controls.Add(this.sizeLabel);
-            this.panel1.Controls.Add(this.classLabel);
-            this.panel1.Controls.Add(this.sizeComboBox);
-            this.panel1.Controls.Add(this.styleComboBox);
-            this.panel1.Controls.Add(this.styleLabel);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1066, 75);
-            this.panel1.TabIndex = 13;
+            this.filtersPanel.BackColor = System.Drawing.Color.White;
+            this.filtersPanel.Controls.Add(this.searchTextBox);
+            this.filtersPanel.Controls.Add(this.clearButton);
+            this.filtersPanel.Controls.Add(this.availabilityCheckBox);
+            this.filtersPanel.Controls.Add(this.categoryComboBox);
+            this.filtersPanel.Controls.Add(this.categoryLabel);
+            this.filtersPanel.Controls.Add(this.productLineComboBox);
+            this.filtersPanel.Controls.Add(this.languageComboBox);
+            this.filtersPanel.Controls.Add(this.subcategoryLabel);
+            this.filtersPanel.Controls.Add(this.classComboBox);
+            this.filtersPanel.Controls.Add(this.searchLabel);
+            this.filtersPanel.Controls.Add(this.productLineLabel);
+            this.filtersPanel.Controls.Add(this.subcategoryComboBox);
+            this.filtersPanel.Controls.Add(this.languageLabel);
+            this.filtersPanel.Controls.Add(this.sizeLabel);
+            this.filtersPanel.Controls.Add(this.classLabel);
+            this.filtersPanel.Controls.Add(this.sizeComboBox);
+            this.filtersPanel.Controls.Add(this.styleComboBox);
+            this.filtersPanel.Controls.Add(this.styleLabel);
+            this.filtersPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.filtersPanel.Location = new System.Drawing.Point(0, 0);
+            this.filtersPanel.Name = "filtersPanel";
+            this.filtersPanel.Size = new System.Drawing.Size(1066, 75);
+            this.filtersPanel.TabIndex = 13;
             // 
             // searchTextBox
             // 
@@ -311,6 +313,7 @@
             this.productLineComboBox.Size = new System.Drawing.Size(50, 25);
             this.productLineComboBox.TabIndex = 12;
             this.productLineComboBox.SelectedIndexChanged += new System.EventHandler(this.productLineComboBox_SelectedIndexChanged);
+            this.productLineComboBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.productLineComboBox_MouseDown);
             // 
             // searchLabel
             // 
@@ -350,13 +353,13 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1066, 550);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.filtersPanel);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AdventureWorks";
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.filtersPanel.ResumeLayout(false);
+            this.filtersPanel.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -377,7 +380,7 @@
         private System.Windows.Forms.Label classLabel;
         private System.Windows.Forms.ComboBox languageComboBox;
         private System.Windows.Forms.Label languageLabel;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel filtersPanel;
         private System.Windows.Forms.ColumnHeader nameColumnHeader;
         private System.Windows.Forms.ColumnHeader descriptionColumnHeader;
         private System.Windows.Forms.Panel panel2;

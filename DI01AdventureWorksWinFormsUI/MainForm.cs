@@ -10,6 +10,7 @@ namespace DI01AdventureWorksWinFormsUI
     public partial class MainForm : Form
     {
         private string lastSql, language;
+        private Query lastQuery;
         private bool onlyavailableProducts = true;
         private bool firstTime = true;
         public MainForm()
@@ -31,7 +32,7 @@ namespace DI01AdventureWorksWinFormsUI
 
         private void ShowResults(string lastSql)
         {
-            this.lastSql = lastSql;
+            //this.lastSql = lastSql;
             resultListView.Items.Clear();
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnVal("AdventureWorksDB")))
             {
@@ -75,6 +76,7 @@ namespace DI01AdventureWorksWinFormsUI
                 var sizes = connection.Query<string>($"EXEC spSize_GetAll '{categoryComboBox.SelectedItem.ToString()}', '{subcategoryComboBox.SelectedItem.ToString()}'").ToList();
                 if (sizes.Count() > 1)
                 {
+                    sizeComboBox.Enabled = true;
                     foreach (var size in sizes) sizeComboBox.Items.Add(size);
                 }
                 else
@@ -86,11 +88,14 @@ namespace DI01AdventureWorksWinFormsUI
 
         private void LoadClassCombo()
         {
+            classComboBox.Items.Clear();
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnVal("AdventureWorksDB")))
             {
                 var classes = connection.Query<string>($"EXEC spClass_GetAll @Subcategory = '{subcategoryComboBox.SelectedItem.ToString()}';").ToList();
+                //MessageBox.Show(classes.Count().ToString());
                 if (classes.Count() > 1)
                 {
+                    classComboBox.Enabled = true;
                     foreach (var clas in classes) classComboBox.Items.Add(clas);
                 }
                 else
@@ -102,29 +107,57 @@ namespace DI01AdventureWorksWinFormsUI
 
         private void LoadStyleCombo()
         {
-
+            styleComboBox.Items.Clear();
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnVal("AdventureWorksDB")))
+            {
+                var styles = connection.Query<string>($"EXEC spStyle_GetAll @Subcategory = '{subcategoryComboBox.SelectedItem.ToString()}';").ToList();
+                if (styles.Count() > 1)
+                {
+                    styleComboBox.Enabled = true;
+                    foreach (var style in styles) styleComboBox.Items.Add(style);
+                }
+                else
+                {
+                    styleComboBox.Enabled = false;
+                }
+            }
         }
 
         private void LoadProductLineCombo()
         {
-
+            productLineComboBox.Items.Clear();
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnVal("AdventureWorksDB")))
+            {
+                var plines = connection.Query<string>($"EXEC spProductLine_GetAll @Subcategory = '{subcategoryComboBox.SelectedItem.ToString()}';").ToList();
+                if (plines.Count() > 1)
+                {
+                    productLineComboBox.Enabled = true;
+                    foreach (var pline in plines) productLineComboBox.Items.Add(pline);
+                }
+                else
+                {
+                    productLineComboBox.Enabled = false;
+                }
+            }
         }
 
         private void LoadAllFilters()
         {
-            sizeComboBox.Enabled = true;
-            classComboBox.Enabled = true;
-            styleComboBox.Enabled = true;
-            productLineComboBox.Enabled = true;
+            //sizeComboBox.Enabled = true;
+            //classComboBox.Enabled = true;
+            //styleComboBox.Enabled = true;
+            //productLineComboBox.Enabled = true;
             LoadSizeCombo();
             LoadClassCombo();
-            LoadSizeCombo();
+            LoadStyleCombo();
             LoadProductLineCombo();
         }
 
         private void categoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ShowResults($"EXEC spGeneric_ShowResult @Idioma = '{language}', @Category = '{categoryComboBox.SelectedItem}', @Availability = {(onlyavailableProducts ? 0 : 1)};");
+            lastQuery = new Query(language, categoryComboBox.SelectedItem.ToString(), null, null, null, null, null, onlyavailableProducts);
+            ShowResults(lastQuery.ToQuery());
+            //ShowResults($"EXEC spGeneric_ShowResult @Idioma = '{language}', @Category = '{categoryComboBox.SelectedItem}', @Availability = {(onlyavailableProducts ? 0 : 1)};");
             subcategoryComboBox.Enabled = true;
             subcategoryComboBox.Text = "";
             LoadSubcategoryCombo();
@@ -133,16 +166,19 @@ namespace DI01AdventureWorksWinFormsUI
 
         private void subcategoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ShowResults($"EXEC spGeneric_ShowResult @Idioma = '{language}', @Category = '{categoryComboBox.SelectedItem}', @Subcategory = '{subcategoryComboBox.SelectedItem}', @Availability = {(onlyavailableProducts ? 0 : 1)};");
+            lastQuery = new Query(language, categoryComboBox.SelectedItem.ToString(), subcategoryComboBox.SelectedItem.ToString(), null, null, null, null, onlyavailableProducts);
+            ShowResults(lastQuery.ToQuery());
+            //ShowResults($"EXEC spGeneric_ShowResult @Idioma = '{language}', @Category = '{categoryComboBox.SelectedItem}', @Subcategory = '{subcategoryComboBox.SelectedItem}', @Availability = {(onlyavailableProducts ? 0 : 1)};");
             LoadAllFilters();
-            searchTextBox.Text = new Query(language, categoryComboBox.SelectedItem.ToString(), subcategoryComboBox.SelectedItem.ToString(), null, null, null, null, true).ToQuery();
         }
 
         private void sizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (sizeComboBox.SelectedItem != null)
             {
-                ShowResults($"EXEC spGeneric_ShowResult @Idioma = '{language}', @Category = '{categoryComboBox.SelectedItem}', @Subcategory = '{subcategoryComboBox.SelectedItem}', @Size = '{sizeComboBox.SelectedItem}', @Availability = {(onlyavailableProducts ? 0 : 1)};");
+                lastQuery = new Query(language, categoryComboBox.SelectedItem.ToString(), subcategoryComboBox.SelectedItem.ToString(), sizeComboBox.SelectedItem.ToString(), null, null, null, onlyavailableProducts);
+                ShowResults(lastQuery.ToQuery());
+                //ShowResults($"EXEC spGeneric_ShowResult @Idioma = '{language}', @Category = '{categoryComboBox.SelectedItem}', @Subcategory = '{subcategoryComboBox.SelectedItem}', @Size = '{sizeComboBox.SelectedItem}', @Availability = {(onlyavailableProducts ? 0 : 1)};");
                 classComboBox.Enabled = false;
                 styleComboBox.Enabled = false;
                 productLineComboBox.Enabled = false;
@@ -153,7 +189,35 @@ namespace DI01AdventureWorksWinFormsUI
         {
             if (classComboBox.SelectedItem != null)
             {
-                ShowResults($"EXEC spGeneric_ShowResult @Idioma = {language}, @Category = '{categoryComboBox.SelectedItem}', @Subcategory = '{subcategoryComboBox.SelectedItem}', @Class = '{classComboBox.SelectedItem}', @Availability = {(onlyavailableProducts ? 0 : 1)};");
+                lastQuery = new Query(language, categoryComboBox.SelectedItem.ToString(), subcategoryComboBox.SelectedItem.ToString(), null, classComboBox.SelectedItem.ToString(), null, null, onlyavailableProducts);
+                ShowResults(lastQuery.ToQuery());
+                sizeComboBox.Enabled = false;
+                styleComboBox.Enabled = false;
+                productLineComboBox.Enabled = false;
+            }
+        }
+
+        private void styleComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (styleComboBox.SelectedItem != null)
+            {
+                lastQuery = new Query(language, categoryComboBox.SelectedItem.ToString(), subcategoryComboBox.SelectedItem.ToString(), null, null, styleComboBox.SelectedItem.ToString(), null, onlyavailableProducts);
+                ShowResults(lastQuery.ToQuery());
+                sizeComboBox.Enabled = false;
+                classComboBox.Enabled = false;
+                productLineComboBox.Enabled = false;
+            }
+        }
+
+        private void productLineComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (productLineComboBox.SelectedItem != null)
+            {
+                lastQuery = new Query(language, categoryComboBox.SelectedItem.ToString(), subcategoryComboBox.SelectedItem.ToString(), null, null, null, productLineComboBox.SelectedItem.ToString(), onlyavailableProducts);
+                ShowResults(lastQuery.ToQuery());
+                sizeComboBox.Enabled = false;
+                classComboBox.Enabled = false;
+                styleComboBox.Enabled = false;
             }
         }
 
@@ -163,19 +227,24 @@ namespace DI01AdventureWorksWinFormsUI
             categoryComboBox.Items.Clear();
             subcategoryComboBox.Items.Clear();
             sizeComboBox.Items.Clear();
+            
             LoadCategoryCombo();
+            DisableFilters();
+        }
+
+        private void DisableFilters()
+        {
             sizeComboBox.Enabled = false;
             classComboBox.Enabled = false;
             styleComboBox.Enabled = false;
             productLineComboBox.Enabled = false;
         }
-
-        private void languageChange()
+        private void EnableFilters()
         {
-        }
-        private void productLineComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
+            sizeComboBox.Enabled = true;
+            classComboBox.Enabled = true;
+            styleComboBox.Enabled = true;
+            productLineComboBox.Enabled = true;
         }
 
         private void sizeComboBox_MouseDown(object sender, MouseEventArgs e)
@@ -183,6 +252,8 @@ namespace DI01AdventureWorksWinFormsUI
             if (e.Button == MouseButtons.Right)
             {
                 sizeComboBox.SelectedItem = null;
+                EnableFilters();
+                subcategoryComboBox_SelectedIndexChanged(sender, e);
             }
         }
 
@@ -191,18 +262,40 @@ namespace DI01AdventureWorksWinFormsUI
             if (e.Button == MouseButtons.Right)
             {
                 classComboBox.SelectedItem = null;
+                EnableFilters();
+                subcategoryComboBox_SelectedIndexChanged(sender, e);
+            }
+        }
+
+        private void styleComboBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                styleComboBox.SelectedItem = null;
+                EnableFilters();
+                subcategoryComboBox_SelectedIndexChanged(sender, e);
+            }
+        }
+
+        private void productLineComboBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                productLineComboBox.SelectedItem = null;
+                EnableFilters();
+                subcategoryComboBox_SelectedIndexChanged(sender, e);
             }
         }
 
         private void availabilityCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
             if (onlyavailableProducts)
             {
                 onlyavailableProducts = false;
                 if (!firstTime)
                 {
-                    ShowResults(lastSql.Replace("0", "1"));
+                    lastQuery.Availability = false;
+                    ShowResults(lastQuery.ToQuery());
                 }
             }
             else
@@ -210,27 +303,26 @@ namespace DI01AdventureWorksWinFormsUI
                 onlyavailableProducts = true;
                 if (!firstTime)
                 {
-                    ShowResults(lastSql.Replace("1", "0"));
+                    lastQuery.Availability = true;
+                    ShowResults(lastQuery.ToQuery());
                 }
             }
         }
 
-
-
         private void languageComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (languageComboBox.SelectedItem.ToString() == "French")
+            {
+                language = "fr";
+            }
+            else
+            {
+                language = "en";
+            }
             if (!firstTime)
             {
-                if (languageComboBox.SelectedItem.ToString() == "French")
-                {
-                    language = "fr";
-                    //ShowResults(lastSql.Replace("'en'", "'fr'"));
-                }
-                else
-                {
-                    language = "en";
-                    //ShowResults(lastSql.Replace("'fr'", "'en'"));
-                }
+                lastQuery.Language = language;
+                ShowResults(lastQuery.ToQuery());
             }
         }
     }
