@@ -5,6 +5,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SELECT Production.ProductCategory.Name FROM Production.ProductCategory;
 END
+GO
 
 
 -- Obtener a partir de una categoría las subcategorias correspondientes.
@@ -15,7 +16,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SELECT Production.ProductSubcategory.Name FROM Production.ProductSubcategory WHERE Production.ProductSubcategory.ProductCategoryID = (SELECT Production.ProductCategory.ProductCategoryID FROM Production.ProductCategory WHERE Production.ProductCategory.Name = @Categoria);
 END
-
+GO
 
 -- Obtener a partir de una categoria y una subcategoria los tamaños correspondientes.
 CREATE PROCEDURE spSize_GetAll
@@ -28,6 +29,7 @@ BEGIN
 	WHERE Production.ProductSubcategory.ProductCategoryID = (SELECT Production.ProductCategory.ProductCategoryID FROM Production.ProductCategory WHERE Production.ProductCategory.Name = @Categoria)
 	AND Production.ProductSubcategory.Name = @Subcategoria AND Production.Product.Size IS NOT NULL;
 END
+GO
 
 -- Obtener a partir de una subcategoria las classes correspondientes
 CREATE PROCEDURE spClass_GetAll
@@ -38,6 +40,7 @@ BEGIN
 	WHERE Production.Product.ProductSubcategoryID = (SELECT Production.ProductSubcategory.ProductSubcategoryID FROM Production.ProductSubcategory 
 	WHERE Production.ProductSubcategory.Name = @Subcategory) AND Production.Product.Class IS NOT NULL;
 END
+GO
 
 -- Obtener a partir de una subcategoria los estilos/Style correspondientes
 CREATE PROCEDURE spStyle_GetAll
@@ -46,8 +49,9 @@ AS
 BEGIN
 	SELECT DISTINCT Production.Product.Style FROM Production.Product 
 	WHERE Production.Product.ProductSubcategoryID = (SELECT Production.ProductSubcategory.ProductSubcategoryID FROM Production.ProductSubcategory 
-	WHERE Production.ProductSubcategory.Name = @Subcategory) Production.Product.Style IS NOT NULL;
+	WHERE Production.ProductSubcategory.Name = @Subcategory) AND Production.Product.Style IS NOT NULL;
 END
+GO
 
 -- Obtener a partir de una subcategoria los ProductLine correpondientes
 CREATE PROCEDURE spProductLine_GetAll
@@ -58,6 +62,7 @@ BEGIN
 	WHERE Production.Product.ProductSubcategoryID = (SELECT Production.ProductSubcategory.ProductSubcategoryID FROM Production.ProductSubcategory 
 	WHERE Production.ProductSubcategory.Name = @Subcategory) AND Production.Product.ProductLine IS NOT NULL;
 END
+GO
 
 -- Obtener el precio más alto.
 CREATE PROCEDURE spMaxPrice_GetAll
@@ -66,7 +71,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SELECT MAX(Production.Product.ListPrice) FROM Production.Product;
 END
-
+GO
 
 
 --------------------------------------------------------------
@@ -278,3 +283,4 @@ BEGIN
 		END
 	END
 END
+GO
